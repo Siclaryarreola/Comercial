@@ -1,98 +1,92 @@
+/* Estilos generales */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajuste para contenedor compacto */
+.compact-container {
+    max-width: 800px; /* Se reduce el ancho */
+    padding: 15px; /* Menor espacio interno */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Sombra más ligera */
+}
+
+/* Contenedor interno */
+.content-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-color: #f4f4f4; /* Fondo general */
-}
-
-header {
-    background-color: #343a40;
-    color: white;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 60px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    justify-content: center;
+    gap: 20px;
 }
 
-main {
-    flex: 1;
-    padding: 20px;
-    width: 100%; /* Asegura que main ocupe todo el ancho disponible */
-    margin-top: 10px; /* Espaciado desde el header */
+/* Imagen */
+.image-container img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.btn-primary {
-    background-color: #199bad;
-    border: none;
-    transition: background-color 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: #117a8b;
-}
-
-header .logo img {
-    height: 100%;
-}
-
-nav {
-    display: flex;
-    align-items: center;
-}
-
-nav a, .dropbtn {
-    color: white;
-    text-decoration: none;
-    margin-left: 20px;
-    padding: 10px;
-    background-color: #199bad;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-nav a:hover, .dropbtn:hover {
-    background-color: #17a2b8;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-footer {
-    padding: 10px 20px;
+/* Texto */
+.text-container {
     text-align: center;
-    background-color: #343a40;
-    color: white;
-    clear: both; /* Asegura que el footer se mantenga en la parte inferior */
+    max-width: 600px; /* Ancho reducido */
+}
+
+/* Títulos */
+h2 {
+    font-size: 1.5rem; /* Tamaño de fuente reducido */
+    margin-bottom: 10px;
+}
+
+/* Texto */
+.lead {
+    font-size: 1rem; /* Tamaño reducido */
+    line-height: 1.4;
+    color: #555;
+}
+
+/* Footer */
+footer {
+    background-color: #343a40; /* Color de fondo oscuro */
+    color: white; /* Texto blanco */
+    text-align: center; /* Centrado */
+    padding: 10px 0; /* Espaciado interno vertical */
+    position: fixed; /* Fijo en la parte inferior */
+    bottom: 0; /* Pegado al borde inferior */
+    left: 0; /* Pegado al borde izquierdo */
+    width: 100%; /* Ancho completo */
+    font-size: 0.9rem; /* Tamaño de fuente */
+    box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.1); /* Sombra superior */
+}
+
+/* Responsividad */
+@media (min-width: 768px) {
+    .content-wrapper {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .image-container,
+    .text-container {
+        flex: 1;
+        max-width: 50%;
+    }
+
+    .text-container {
+        text-align: left;
+        padding-left: 20px;
+    }
 }

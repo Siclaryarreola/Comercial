@@ -1,5 +1,5 @@
 <?php
-require_once('models/RegisterModel.php'); // Ruta al modelo de registro
+require_once('models/registerModel.php'); // Ruta al modelo de registro
 
 class RegisterController 
 {

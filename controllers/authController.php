@@ -24,7 +24,7 @@ class authController
         $userModel->savePasswordResetToken($email, $token);
 
         // Enlace de recuperación que se enviará por correo
-        $resetLink = "http://localhost:8081/Portal/index.php?controller=auth&action=resetPassword&token=$token";
+       // $resetLink = "http://localhost:8081/comercial/index.php?controller=auth&action=resetPassword&token=$token";
         mail($email, "Recuperación de contraseña", "Haga clic en este enlace para recuperar su contraseña: $resetLink");
 
         // Redirigir con mensaje de éxito

@@ -16,7 +16,7 @@ class LoginModel
             SELECT u.id, u.nombre, u.correo, u.contraseña, u.rol, u.puesto, u.sucursal, u.estado,
                    d.intentos_fallidos, d.ultimo_intento, d.ultimo_acceso, d.reset_token, d.reset_expiry
             FROM usuarios u
-            INNER JOIN detalleusuarios d ON u.detalle_id = d.id
+            INNER JOIN detalleusuarios d ON u.id = d.id
             WHERE u.correo = ?
         ";
         
@@ -84,4 +84,4 @@ class LoginModel
         $stmt->execute();
     }
 }
-
+?>

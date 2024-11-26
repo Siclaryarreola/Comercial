@@ -1,63 +1,75 @@
-<?php 
+<?php
 $activePage = 'profile';
+include('components/header.php');
+require_once('../controllers/profileController.php');
 
-require_once('components/header.php');
-require_once('../../models/userModel.php'); // Asegúrate de que la ruta es correcta
+$profileController = new ProfileController();
+$profileData = $profileController->getProfileData();
 
-// Crear instancia del modelo y obtener los usuarios
-$userModel = new UserModel();
-$usuarios = $userModel->getUsuarios();
+// Manejar mensajes de éxito y error de la sesión
+$successMessage = $_SESSION['success'] ?? '';
+$errorMessage = $_SESSION['error'] ?? '';
+unset($_SESSION['success'], $_SESSION['error']);
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario</title>
-    <link rel="stylesheet" href="public/css/styleProfile.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="main-container">
-            <!-- Sección del perfil -->
-            <div class="profile-container">
-                <div class="profile-photo">
-                    <?php if (!empty($profileData['foto_perfil'])): ?>
-                        <img src="<?php echo htmlspecialchars($profileData['foto_perfil']); ?>" alt="Foto del usuario" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
-                    <?php else: ?>
-                        <img src="public/images/default-profile.png" alt="Foto predeterminada" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
-                    <?php endif; ?>
-                </div>
-                <div class="user-info">
-                    <h1><?php echo htmlspecialchars($profileData['nombre']); ?></h1>
-                    <p><strong>Correo Electrónico:</strong> <?php echo htmlspecialchars($profileData['email']); ?></p>
-                    <p><strong>Creado:</strong> <?php echo htmlspecialchars($profileData['fecha_creacion']); ?></p>
-                    <p><strong>Último inicio de sesión:</strong> <?php echo htmlspecialchars($profileData['ultimo_login']); ?></p>
-                    <p><strong>Género:</strong> <?php echo htmlspecialchars($profileData['genero']); ?></p>
+<link rel="stylesheet" href="../public/css/styleProfile.css">
 
-                    <form action="profileController.php?action=updateProfilePhoto" method="POST" enctype="multipart/form-data">
-                        <div class="form-group mt-3">
-                            <label for="foto_perfil">Cambiar Foto de Perfil:</label>
-                            <input type="file" name="foto_perfil" id="foto_perfil" class="form-control-file" accept="image/*" required>
+<main class="container mt-4">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="profileTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Perfil</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#password" role="tab" aria-controls="profile" aria-selected="false">Cambiar Contraseña</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    <img src="<?php echo htmlspecialchars($profileData['foto_perfil'] ?? '../public/images/default-profile.png'); ?>" alt="Foto de perfil" class="img-fluid rounded-circle shadow-sm">
+                    <form action="profileController.php?action=updatePhoto" method="POST" enctype="multipart/form-data" class="mt-3">
+                        <input type="file" name="foto_perfil" class="form-control-file">
+                        <button type="submit" class="btn btn-primary mt-2">Cambiar Foto</button>
+                    </form>
+                </div>
+                <div class="col-md-8">
+                    <h2>Información de Perfil</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" value="<?php echo htmlspecialchars($profileData['nombre'] ?? ''); ?>" readonly>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-2">Actualizar Foto</button>
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" value="<?php echo htmlspecialchars($profileData['correo'] ?? ''); ?>" readonly>
+                        </div>
+                        <!-- Otros campos como puesto y sucursal si están disponibles -->
                     </form>
                 </div>
             </div>
-
-            <!-- Sección de administrador -->
-            <div class="sidebar">
-                <h2><?php echo strtoupper(htmlspecialchars($profileData['rol'])); ?></h2>
-                <button class="btn btn-warning border-white text-dark rounded">Editar Perfil</button>
-                <ul>
-                    <li>Acceso a la administración de usuarios</li>
-                    <li>Acceso a la configuración</li>
-                    <li>Acceso a las notificaciones</li>
-                </ul>
-            </div>
+        </div>
+        <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="profile-tab">
+            <h2>Cambiar Contraseña</h2>
+            <form action="profileController.php?action=changePassword" method="POST">
+                <div class="form-group">
+                    <label for="currentPassword">Contraseña Actual</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nueva Contraseña</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success">Actualizar Contraseña</button>
+            </form>
         </div>
     </div>
-</body>
-</html>
+</main>
 
+<?php include('components/footer.php'); ?>

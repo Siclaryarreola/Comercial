@@ -1,11 +1,11 @@
 <?php
-require_once('controllers/LoginController.php');
-require_once('controllers/RegisterController.php');
-require_once('controllers/SessionManager.php');
+require_once('controllers/loginController.php');
+require_once('controllers/registerController.php');
+require_once('controllers/sessionManager.php');
 
 SessionManager::initSession();
 
-define('TIEMPO_MAXIMO_INACTIVIDAD', 1800); // 30 minutos
+define('TIEMPO_MAXIMO_INACTIVIDAD', 180); // 30 minutos
 if (isset($_SESSION['ultimo_tiempo_actividad']) && (time() - $_SESSION['ultimo_tiempo_actividad'] > TIEMPO_MAXIMO_INACTIVIDAD)) {
     include('controllers/logout.php');
     exit;
@@ -13,16 +13,16 @@ if (isset($_SESSION['ultimo_tiempo_actividad']) && (time() - $_SESSION['ultimo_t
 
 $_SESSION['ultimo_tiempo_actividad'] = time();
 
-$action = $_GET['action'] ?? 'showLoginForm'; // Define acción por defecto
+$action = $_GET['action'] ?? 'showLoginForm'; // Define accion por defecto
 $controllerName = $_GET['controller'] ?? 'login'; // Controlador por defecto
 
 switch ($controllerName) 
 {
     case 'login':
-        $controller = new LoginController();
+        $controller = new loginController();
         break;
     case 'register':
-        $controller = new RegisterController();
+        $controller = new registerController();
         break;
     default:
         header("HTTP/1.0 404 Not Found");

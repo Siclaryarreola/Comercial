@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Ventas - Registro</title>
+    <title>Portal Leads - Registro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="public/css/style.css">
     <link rel="icon" href="public/images/favico.png" type="image/x-icon">
@@ -61,7 +61,7 @@
                     </form>
 
                     <p class="text-center mt-3">
-                        ¿Ya tienes cuenta? <a href="Login.php" class="text-primary">Inicia sesión</a>
+                        ¿Ya tienes cuenta? <a href="login.php" class="text-primary">Inicia sesión</a>
                     </p>
                 </div>
             </div>

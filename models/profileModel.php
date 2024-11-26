@@ -1,42 +1,84 @@
 <?php
-// Ruta: models/ProfileModel.php
+require_once('../config/database.php');
 
-class ProfileModel {
+class ProfileModel
+{
     private $db;
 
-    public function __construct() {
-        // Conectar a la base de datos
+    public function __construct()
+    {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // Método para obtener el perfil de un usuario por su ID
-    public function getUserProfileById($userId) {
-        $query = "SELECT nombre, email, fecha_creacion, ultimo_login,  foto_perfil, notificaciones, rol 
-                  FROM usuarios WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(['id' => $userId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // Método para actualizar la foto de perfil de un usuario
-    public function updateProfilePhoto($userId, $filePath) 
+    // Obtener los datos del perfil por correo electrónico.
+    public function getProfileByEmail($email)
     {
-        $query = "UPDATE usuarios SET foto_perfil = :foto_perfil WHERE id = :id";
+        $query = "
+            SELECT 
+                usuarios.id,
+                usuarios.nombre,
+                usuarios.correo,
+                detalleusuarios.ultimo_acceso,
+                detalleusuarios.fecha_creacion,
+                IFNULL(detalleusuarios.foto_perfil, '../public/images/images_usuario.png') AS foto_perfil,
+                detalleusuarios.foto_perfil, -- Incluye el nuevo campo de archivo cargado
+                detalleusuarios.genero,
+                roles.rol AS rol
+            FROM 
+                usuarios
+            LEFT JOIN detalleusuarios ON usuarios.detalle_id = detalleusuarios.id
+            LEFT JOIN roles ON usuarios.rol = roles.id
+            WHERE 
+                usuarios.id = ?
+        ";
+
         $stmt = $this->db->prepare($query);
-        return $stmt->execute(['foto_perfil' => $filePath, 'id' => $userId]);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
     }
 
-    // Método opcional para actualizar otros datos del perfil
-    public function updateProfileInfo($userId, $data) {
-        $query = "UPDATE usuarios SET nombre = :nombre, email = :email, genero = :genero, notificaciones = :notificaciones 
-                  WHERE id = :id";
+    // Actualizar la foto de perfil de un usuario.
+    public function updateProfilePhoto($userId, $photoPath)
+    {
+        $query = "
+            UPDATE detalleusuarios 
+            SET foto_perfil = ? 
+            WHERE id = (SELECT detalle_id FROM usuarios WHERE id = ?)
+        ";
         $stmt = $this->db->prepare($query);
-        return $stmt->execute([
-            'nombre' => $data['nombre'],
-            'email' => $data['email'],
-            'genero' => $data['genero'],
-            'notificaciones' => $data['notificaciones'],
-            'id' => $userId
-        ]);
+        $stmt->bind_param("si", $photoPath, $userId);
+
+        return $stmt->execute();
+    }
+
+    // Actualizar información básica del perfil de un usuario.
+    public function updateBasicProfileInfo($userId, $name, $gender)
+    {
+        $query = "
+            UPDATE detalleusuarios 
+            SET nombre = ?, genero = ? 
+            WHERE id = (SELECT detalle_id FROM usuarios WHERE id = ?)
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("ssi", $name, $gender, $userId);
+
+        return $stmt->execute();
+    }
+
+    // Actualizar la ruta del archivo cargado en la base de datos.
+    public function updateUploadedFilePath($userId, $filePath)
+    {
+        $query = "
+            UPDATE detalleusuarios 
+            SET foto_perfil = ? 
+            WHERE id = (SELECT detalle_id FROM usuarios WHERE id = ?)
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("si", $filePath, $userId);
+
+        return $stmt->execute();
     }
 }

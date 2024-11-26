@@ -1,6 +1,8 @@
 <?php
 // Incluir el modelo y otras dependencias necesarias
-require_once(__DIR__ . '/../models/leadsModel.php');
+require_once( '../models/leadsModel.php');
+define('BASE_PATH', dirname(__DIR__)); // Esto define la ruta base del proyecto
+
 
 // Clase del controlador
 class LeadsController {
@@ -60,17 +62,24 @@ class LeadsController {
         }
         return true; // Todos los campos son válidos
     }
-    private function uploadFile($file) {
-        if ($file['error'] == 0 && $file['type'] == 'application/pdf') {
-            $uploadPath = __DIR__ . '../../Leads/';  // Asegúrate de que este directorio existe y tiene permisos adecuados
+   private function uploadFile($file) {
+    $uploadDir = BASE_PATH . '/leads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    if ($file['error'] === 0 && $file['size'] <= 2 * 1024 * 1024) { // Tamaño máximo: 2MB
+        $allowedTypes = ['application/pdf'];
+        if (in_array($file['type'], $allowedTypes)) {
             $filename = uniqid() . '_' . basename($file['name']);
-            $destination = $uploadPath . $filename;
-            if (move_uploaded_file($file['tmp_name'], $destination)) {
-                return $filename;  // Guarda y retorna el nombre del archivo
+            if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+                return $filename;
             }
         }
-        return null;  // Retorna null si hay error
     }
+    return null;
+}
+
     
 }
 

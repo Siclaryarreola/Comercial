@@ -6,13 +6,6 @@ require_once('../controllers/profileController.php');
 $profileController = new ProfileController();
 $profileData = $profileController->getProfileData();
 
-<<<<<<< HEAD
-=======
-// Manejar mensajes de éxito y error de la sesión
-$successMessage = $_SESSION['success'] ?? '';
-$errorMessage = $_SESSION['error'] ?? '';
-unset($_SESSION['success'], $_SESSION['error']);
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
 ?>
 <link rel="stylesheet" href="../public/css/styleProfile.css">
 
@@ -32,13 +25,8 @@ unset($_SESSION['success'], $_SESSION['error']);
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
             <div class="row align-items-center">
                 <div class="col-md-4 text-center">
-<<<<<<< HEAD
                     <img src="<?php echo htmlspecialchars($profileData['foto_perfil'] ?? '../photos/images_usuario.png'); ?>" alt="Foto de perfil" class="img-fluid rounded-circle shadow-sm">
                     <form action="../controllers/profileController.php?action=updatePhoto" method="POST" enctype="multipart/form-data" class="mt-3">
-=======
-                    <img src="<?php echo htmlspecialchars($profileData['foto_perfil'] ?? '../public/images/default-profile.png'); ?>" alt="Foto de perfil" class="img-fluid rounded-circle shadow-sm">
-                    <form action="profileController.php?action=updatePhoto" method="POST" enctype="multipart/form-data" class="mt-3">
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
                         <input type="file" name="foto_perfil" class="form-control-file">
                         <button type="submit" class="btn btn-primary mt-2">Cambiar Foto</button>
                     </form>
@@ -64,7 +52,6 @@ unset($_SESSION['success'], $_SESSION['error']);
             <form action="profileController.php?action=changePassword" method="POST">
                 <div class="form-group">
                     <label for="currentPassword">Contraseña Actual</label>
-<<<<<<< HEAD
                     <input type="password" class="form-control" id="currentPassword" name="currentPassword" autocomplete="current-password" required>
                 </div>
                 <div class="form-group">
@@ -74,17 +61,6 @@ unset($_SESSION['success'], $_SESSION['error']);
                 <div class="form-group">
                     <label for="confirmPassword">Confirmar Nueva Contraseña</label>
                     <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required>
-=======
-                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirmar Nueva Contraseña</label>
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
                 </div>
                 <button type="submit" class="btn btn-success">Actualizar Contraseña</button>
             </form>

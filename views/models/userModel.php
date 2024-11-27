@@ -15,21 +15,19 @@ class UserModel
     {
         $query = "
             SELECT 
-                usuarios.id,
+                usuarios.id_usuarios,
                 usuarios.nombre,
                 usuarios.correo,
                 roles.rol AS rol,
                 puestos.puesto AS puesto,
                 sucursales.sucursal AS sucursal,
                 usuarios.estado,
-                usuarios.detalle_id,
-                detalleusuarios.ultimo_acceso
+                usuarios.ultimo_acceso
             FROM 
                 usuarios
             LEFT JOIN roles ON usuarios.rol = roles.id
             LEFT JOIN puestos ON usuarios.puesto = puestos.id
             LEFT JOIN sucursales ON usuarios.sucursal = sucursales.id
-            LEFT JOIN detalleusuarios ON usuarios.detalle_id = detalleusuarios.id
         ";
 
         $result = $this->db->query($query);
@@ -88,7 +86,6 @@ class UserModel
         return $sucursales;
     }
 
-<<<<<<< HEAD
     // Método para obtener todos los roles
     public function getRoles() 
     {
@@ -109,30 +106,17 @@ class UserModel
         return $roles;
     }
 
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
     // Método para agregar un nuevo usuario
     public function addUser($name, $email, $password, $role, $position, $branch) 
     {
         $this->db->begin_transaction();
 
         try {
-            // Paso 1: Inserta en la tabla `detalleusuarios`
-            $sqlDetalle = "INSERT INTO detalleusuarios (intentos_fallidos, ultimo_acceso, ultimo_intento, reset_token, reset_expiry) VALUES (0, NULL, NULL, NULL, NULL)";
-            $stmtDetalle = $this->db->prepare($sqlDetalle);
-            $stmtDetalle->execute();
-
-            if ($stmtDetalle->affected_rows !== 1) {
-                throw new Exception("Error al insertar en la tabla detalleusuarios");
-            }
-
-            $detalleId = $this->db->insert_id;
-
-            // Paso 2: Inserta en la tabla `usuarios`
+            // Inserta en la tabla `usuarios`
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-            $sqlUsuario = "INSERT INTO usuarios (nombre, correo, contraseña, rol, puesto, sucursal, estado, detalle_id) VALUES (?, ?, ?, ?, ?, ?, 'Activo', ?)";
+            $sqlUsuario = "INSERT INTO usuarios (nombre, correo, contraseña, rol, puesto, sucursal, estado, intentos_fallidos, ultimo_acceso, ultimo_intento, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, 'Activo', 0, NULL, NULL, NOW())";
             $stmtUsuario = $this->db->prepare($sqlUsuario);
-            $stmtUsuario->bind_param("sssiiii", $name, $email, $hashedPassword, $role, $position, $branch, $detalleId);
+            $stmtUsuario->bind_param("sssiii", $name, $email, $hashedPassword, $role, $position, $branch);
             $stmtUsuario->execute();
 
             if ($stmtUsuario->affected_rows !== 1) {
@@ -155,7 +139,7 @@ class UserModel
         $sql = "
             UPDATE usuarios 
             SET nombre = ?, correo = ?, rol = ?, puesto = ?, sucursal = ?, estado = ? 
-            WHERE id = ?
+            WHERE id_usuarios = ?
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("sssiiii", $name, $email, $role, $position, $branch, $state, $id);
@@ -167,7 +151,7 @@ class UserModel
     // Método para eliminar un usuario por ID
     public function deleteUser($id) 
     {
-        $sql = "DELETE FROM usuarios WHERE id = ?";
+        $sql = "DELETE FROM usuarios WHERE id_usuarios = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -175,3 +159,4 @@ class UserModel
         return $stmt->affected_rows > 0;
     }
 }
+?>

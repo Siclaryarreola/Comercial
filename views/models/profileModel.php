@@ -10,10 +10,7 @@ class ProfileModel
         $this->db = Database::getInstance()->getConnection();
     }
 
-<<<<<<< HEAD
     // Obtener los datos del perfil por correo electrónico.
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
     public function getProfileByEmail($email)
     {
         $query = "
@@ -24,10 +21,7 @@ class ProfileModel
                 detalleusuarios.ultimo_acceso,
                 detalleusuarios.fecha_creacion,
                 IFNULL(detalleusuarios.foto_perfil, '../public/images/images_usuario.png') AS foto_perfil,
-<<<<<<< HEAD
                 detalleusuarios.foto_perfil, -- Incluye el nuevo campo de archivo cargado
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
                 detalleusuarios.genero,
                 roles.rol AS rol
             FROM 
@@ -46,10 +40,7 @@ class ProfileModel
         return $result->fetch_assoc();
     }
 
-<<<<<<< HEAD
     // Actualizar la foto de perfil de un usuario.
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
     public function updateProfilePhoto($userId, $photoPath)
     {
         $query = "
@@ -63,10 +54,7 @@ class ProfileModel
         return $stmt->execute();
     }
 
-<<<<<<< HEAD
     // Actualizar información básica del perfil de un usuario.
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
     public function updateBasicProfileInfo($userId, $name, $gender)
     {
         $query = "
@@ -78,7 +66,6 @@ class ProfileModel
         $stmt->bind_param("ssi", $name, $gender, $userId);
 
         return $stmt->execute();
-<<<<<<< HEAD
     }
 
     // Actualizar la ruta del archivo cargado en la base de datos.
@@ -93,7 +80,5 @@ class ProfileModel
         $stmt->bind_param("si", $filePath, $userId);
 
         return $stmt->execute();
-=======
->>>>>>> cff45ffddbcb0e5238cf42eac9f40556b5905e72
     }
 }

@@ -43,7 +43,11 @@
                             <input class="form-check-input" type="checkbox" id="recuerdame">
                             <label class="form-check-label" for="recuerdame">Recuérdame</label>
                         </div>
+<<<<<<< HEAD
                         <a href="forgotPass.php" class="text-decoration-none">Olvidé mi contraseña</a>
+=======
+                        <a href="/forgotPass.php" class="text-decoration-none">Olvidé mi contraseña</a>
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
                     </div>
                     <button type="submit" class="btn btn-primary w-100">INGRESAR</button>
                 </form>
@@ -58,6 +62,7 @@
 </div>
 
 <!-- Scripts -->
+<<<<<<< HEAD
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -111,5 +116,10 @@
     });
 </script>
 
+=======
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../public/js/loginValidation.js"></script>
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
 </body>
 </html>

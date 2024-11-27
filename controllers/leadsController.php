@@ -1,7 +1,13 @@
 <?php
 // Incluir el modelo y otras dependencias necesarias
+<<<<<<< HEAD
 require_once('../models/leadsModel.php');
 define('BASE_PATH', dirname(__DIR__)); // Define la ruta base del proyecto
+=======
+require_once( '../models/leadsModel.php');
+define('BASE_PATH', dirname(__DIR__)); // Esto define la ruta base del proyecto
+
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
 
 class LeadsController {
     private $leadModel;
@@ -52,6 +58,7 @@ class LeadsController {
             exit();
         }
     }
+<<<<<<< HEAD
 
     private function uploadFile($file) {
         if ($file && $file['error'] === 0 && $file['size'] <= 2 * 1024 * 1024) {
@@ -121,6 +128,37 @@ class LeadsController {
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+=======
+    
+    
+    private function validateData($data) {
+        foreach ($data as $key => $value) {
+            if (empty($value)) {
+                return false; // Considera los datos inválidos si algún campo esencial está vacío o es N/A
+            }
+        }
+        return true; // Todos los campos son válidos
+    }
+   private function uploadFile($file) {
+    $uploadDir = BASE_PATH . '/leads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    if ($file['error'] === 0 && $file['size'] <= 2 * 1024 * 1024) { // Tamaño máximo: 2MB
+        $allowedTypes = ['application/pdf'];
+        if (in_array($file['type'], $allowedTypes)) {
+            $filename = uniqid() . '_' . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+                return $filename;
+            }
+        }
+    }
+    return null;
+}
+
+    
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
 }
 
 // Instanciar y llamar al método directamente si es una petición directa

@@ -16,6 +16,7 @@ class RegisterModel
         // Hashea la contraseña para almacenarla de manera segura
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
+<<<<<<< HEAD
     /*
         // Paso 1: Inserta en la tabla `detalleusuarios` primero
         $sqlDetalle = "INSERT INTO detalleusuarios (intentos_fallidos) VALUES (0)";
@@ -43,6 +44,40 @@ class RegisterModel
 
         if (!$stmtUsuario) {
             return false;
+=======
+        // Paso 1: Inserta en la tabla `detalleusuarios` primero
+        $sqlDetalle = "INSERT INTO detalleusuarios (intentos_fallidos, ultimo_intento, ultimo_acceso, reset_token, reset_expiry) VALUES (0, NULL, NULL, NULL, NULL)";
+        $stmtDetalle = $this->db->prepare($sqlDetalle);
+
+        if (!$stmtDetalle) {
+            return false;
+        }
+
+        // Ejecuta la inserción en `detalleusuarios`
+        $stmtDetalle->execute();
+
+        // Verifica si se insertó correctamente
+        if ($stmtDetalle->affected_rows === 1) {
+            // Obtiene el ID insertado en `detalleusuarios`
+            $detalleId = $this->db->insert_id;
+
+            // Paso 2: Inserta el usuario en la tabla `usuarios` usando el ID de `detalleusuarios`
+            $sqlUsuario = "INSERT INTO usuarios (nombre, correo, contraseña, rol, puesto, sucursal, detalle_id) VALUES (?, ?, ?, 0, ?, ?, ?)";
+            $stmtUsuario = $this->db->prepare($sqlUsuario);
+
+            if (!$stmtUsuario) {
+                return false;
+            }
+
+            // Vincula los parámetros a la consulta SQL de `usuarios`
+            $stmtUsuario->bind_param("sssssi", $name, $email, $hashedPassword, $puesto, $sucursal, $detalleId);
+            $stmtUsuario->execute();
+
+            // Verifica si se insertó correctamente en `usuarios`
+            if ($stmtUsuario->affected_rows === 1) {
+                return $this->db->insert_id; // Devuelve el ID del nuevo usuario
+            }
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
         }
 
         // Vincula los parámetros a la consulta SQL de `usuarios`

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* styleGraphics.css */
 
 /* Contenedor principal */
@@ -50,11 +51,39 @@
 
 /* Filtros */
 .filters {
+=======
+/* General */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Panel superior */
+.top-panel {
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
 }
 
+<<<<<<< HEAD
 .filters .form-control {
     width: 30%;
     margin-right: 10px;
@@ -76,4 +105,99 @@
     margin-bottom: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+=======
+.stat-box {
+    flex: 1;
+    text-align: center;
+    margin: 5px;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    color: #007bff;
+}
+
+/* Panel de métricas */
+.metrics-panel {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.metric-box {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    margin: 5px;
+    background: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    color: #28a745;
+}
+
+.progress-bar {
+    background: #e9ecef;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar > div {
+    background: #28a745;
+    height: 100%;
+    width: 50%;
+}
+
+/* Panel de gráficos */
+.charts-panel {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.chart-box {
+    flex: 1;
+    margin: 5px;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabla */
+.table-container {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background: #28a745;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background: #f9f9f9;
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
 }

@@ -10,6 +10,7 @@ class LeadModel {
 
     // Método para obtener leads junto con la información del cliente y otras tablas relacionadas
     public function getLeads($filters = []) {
+<<<<<<< HEAD
         // Consulta que une leads con clientesleads, periodosleads, estatusleads, gerentesleads, y contactoleads
         $query = "
             SELECT 
@@ -25,6 +26,13 @@ class LeadModel {
             LEFT JOIN estatusleads e ON l.estatus = e.id_estatus
             LEFT JOIN gerentesleads g ON l.gerente_responsable = g.id_gerente
             LEFT JOIN contactoleads m ON l.medio_contacto = m.id_contacto
+=======
+        // Consulta que une leads con clientesleads
+        $query = "
+            SELECT l.*, c.contacto, c.correo, c.telefono, c.empresa, c.giro, c.localidad, c.sucursal
+            FROM leads l
+            LEFT JOIN clientesleads c ON l.id_cliente = c.id
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
         ";
         
         $params = [];
@@ -45,6 +53,7 @@ class LeadModel {
         $query .= " ORDER BY l.fecha_generacion DESC";
     
         $stmt = $this->db->prepare($query);
+<<<<<<< HEAD
         if (!$stmt) {
             error_log("Error preparando la consulta SQL: " . $this->db->error);
             return [];
@@ -132,12 +141,88 @@ class LeadModel {
             $this->db->rollback();
             error_log($e->getMessage());
             return false;
+=======
+        if ($stmt) {
+            if (!empty($params)) {
+                $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_all(MYSQLI_ASSOC);
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
+        }
+    }
+
+    // Método para insertar un nuevo lead
+    public function addLead($data) {
+        $this->db->begin_transaction();
+
+        try {
+            // Insertar datos en la tabla clientesleads
+            $queryCliente = "
+                INSERT INTO clientesleads (contacto, correo, telefono, empresa, giro, localidad, sucursal, fechaCreacion, id_usuario)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
+            ";
+
+            $stmtCliente = $this->db->prepare($queryCliente);
+            $stmtCliente->bind_param(
+                "sssssssi",
+                $data['contacto'],
+                $data['correo'],
+                $data['telefono'],
+                $data['empresa'],
+                $data['giro'],
+                $data['localidad'],
+                $data['sucursal'],
+                $data['usuario_id']
+            );
+
+            if (!$stmtCliente->execute()) {
+                throw new Exception("Error al insertar en clientesleads: " . $stmtCliente->error);
+            }
+
+            // Obtener el ID del cliente insertado
+            $idCliente = $this->db->insert_id;
+
+            // Insertar datos en la tabla leads
+            $queryLead = "
+                INSERT INTO leads (id_cliente, id_usuario, medio_contacto, estatus, cotizacion, linea_negocio, notas, archivo, fecha_generacion)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            ";
+
+            $stmtLead = $this->db->prepare($queryLead);
+            $stmtLead->bind_param(
+                "iissssss",
+                $idCliente,
+                $data['usuario_id'],
+                $data['medio_contacto'],
+                $data['estatus'],
+                $data['cotizacion'],
+                $data['giro'],
+                $data['notas'],
+                $data['archivo']
+            );
+
+            if (!$stmtLead->execute()) {
+                throw new Exception("Error al insertar en leads: " . $stmtLead->error);
+            }
+
+            // Confirmar transacción
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            // Revertir transacción en caso de error
+            $this->db->rollback();
+            error_log($e->getMessage());
+            return false;
         }
     }
 
     // Método para obtener un lead específico por su ID
     public function getLeadById($id) {
         $query = "
+<<<<<<< HEAD
             SELECT 
                 l.*, 
                 c.contacto, c.correo, c.telefono, c.empresa, c.giro, c.localidad, c.sucursal,
@@ -151,6 +236,11 @@ class LeadModel {
             LEFT JOIN estatusleads e ON l.estatus = e.id_estatus
             LEFT JOIN gerentesleads g ON l.gerente_responsable = g.id_gerente
             LEFT JOIN contactoleads m ON l.medio_contacto = m.id_contacto
+=======
+            SELECT l.*, c.contacto, c.correo, c.telefono, c.empresa, c.giro, c.localidad, c.sucursal
+            FROM leads l
+            LEFT JOIN clientesleads c ON l.id_cliente = c.id
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
             WHERE l.id = ?
         ";
 

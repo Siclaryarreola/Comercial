@@ -48,10 +48,13 @@ $user = $_SESSION['user'] ?? ['nombre' => 'Invitado'];
                     <a class="nav-link" href="../views/leads.php">Leads</a>
                 </li>
                 
+<<<<<<< HEAD
                   <li class="nav-item <?php echo ($activePage == 'leadsManagement') ? 'active' : ''; ?>">
                     <a class="nav-link" href="../views/leadsManagement.php">Gestión de Leads</a>
                 </li>
                 
+=======
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
                   <li class="nav-item <?php echo ($activePage == 'graphics') ? 'active' : ''; ?>">
                     <a class="nav-link" href="../views/graphics.php">Gráficos</a>
                 </li>

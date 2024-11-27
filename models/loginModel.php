@@ -16,10 +16,18 @@ class LoginModel
         error_log("Buscando el usuario por email: {$email}");
 
         $sql = "
+<<<<<<< HEAD
             SELECT id_usuarios, nombre, correo, contraseña, rol, puesto, sucursal, estado,
                    intentos_fallidos, ultimo_intento, ultimo_acceso, fecha_creacion, foto_perfil, genero
             FROM usuarios
             WHERE TRIM(LOWER(correo)) = ?
+=======
+            SELECT u.id, u.nombre, u.correo, u.contraseña, u.rol, u.puesto, u.sucursal, u.estado,
+                   d.intentos_fallidos, d.ultimo_intento, d.ultimo_acceso, d.reset_token, d.reset_expiry
+            FROM usuarios u
+            INNER JOIN detalleusuarios d ON u.id = d.id
+            WHERE u.correo = ?
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95
         ";
 
         $stmt = $this->db->prepare($sql);

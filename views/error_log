@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 [27-Nov-2024 16:56:28 America/Mexico_City] PHP Warning:  Undefined array key "id" in /home4/intran23/public_html/comercial/views/graphics.php on line 31
+=======
+[27-Nov-2024 15:03:11 America/Mexico_City] Buscando el usuario por email: marlen1@drg.mx
+[27-Nov-2024 15:03:11 America/Mexico_City] Usuario encontrado: marlen1@drg.mx
+[27-Nov-2024 15:03:11 America/Mexico_City] Buscando el usuario por email: marlen1@drg.mx
+[27-Nov-2024 15:03:11 America/Mexico_City] Usuario encontrado: marlen1@drg.mx
+>>>>>>> 4c9af026af87feae3cbeca5fada286962a632d95

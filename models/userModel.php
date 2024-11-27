@@ -1,161 +1,80 @@
 <?php
-require_once('../../config/database.php'); 
+require_once('../config/database.php');
 
-class UserModel 
-{
+class LeadModel {
     private $db;
 
-    public function __construct() 
-    {
-        // Obtiene la conexión a la base de datos
+    public function __construct() {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // Método para obtener todos los usuarios con sus roles, puestos y sucursales
-    public function getUsuarios() 
-    {
-        // Consulta con JOINs para obtener los datos de las tablas relacionadas
+    // Método para obtener leads junto con la información del cliente y otras tablas relacionadas
+    public function getLeads($filters = []) {
+        // Consulta que une leads con clientesleads, periodosleads, estatusleads, gerentesleads, y contactoleads
         $query = "
             SELECT 
-                usuarios.nombre,
-                usuarios.correo,
-                roles.rol AS rol,
-                usuarios.estado,
-                detalleusuarios.ultimo_acceso,
-                detalleusuarios.intentos_fallidos,
-                detalleusuarios.ultimo_intento,
-                sucursales.sucursal AS sucursal,
-                puestos.puesto AS puesto
-            FROM 
-                usuarios
-            LEFT JOIN detalleusuarios ON usuarios.detalle_id = detalleusuarios.id
-            LEFT JOIN roles ON usuarios.rol = roles.id
-            LEFT JOIN sucursales ON usuarios.sucursal = sucursales.id
-            LEFT JOIN puestos ON usuarios.puesto = puestos.id
+                l.*, 
+                c.contacto, c.correo, c.telefono, c.empresa, c.giro, c.localidad, c.sucursal,
+                p.periodo AS periodo_nombre,  -- Refleja el cambio de nombre_periodo a periodo
+                e.estatus AS estatus_nombre, -- Refleja el cambio de nombre a estatus
+                g.gerente AS gerente_nombre, -- Refleja el cambio de nombre a gerente
+                m.contacto AS medio_contacto_nombre -- Refleja el cambio de nombre a contacto
+            FROM leads l
+            LEFT JOIN clientesleads c ON l.id_cliente = c.id
+            LEFT JOIN periodosleads p ON l.periodo = p.id_periodo  -- Usando 'periodo' para enlazar correctamente con 'id_periodo'
+            LEFT JOIN estatusleads e ON l.estatus = e.id_estatus
+            LEFT JOIN gerentesleads g ON l.gerente_responsable = g.id_gerente
+            LEFT JOIN contactoleads m ON l.medio_contacto = m.id_contacto
         ";
-
-        $result = $this->db->query($query);
-
-        if ($result === false) {
-            die("Error en la consulta SQL: " . $this->db->error);
+        
+        $params = [];
+        $conditions = [];
+    
+        // Agregar filtro por ID de usuario, si se proporciona
+        if (!empty($filters['id_usuario'])) {
+            $conditions[] = "l.id_usuario = ?";
+            $params[] = $filters['id_usuario'];
+        }
+    
+        // Agregar condiciones a la consulta si hay filtros
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        // Ordenar resultados por fecha de generación
+        $query .= " ORDER BY l.fecha_generacion DESC";
+    
+        $stmt = $this->db->prepare($query);
+        if (!$stmt) {
+            error_log("Error preparando la consulta SQL: " . $this->db->error);
+            return [];
         }
 
-        // Procesar resultados
-        $usuarios = [];
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $usuarios[] = $row;
+        if (!empty($params)) {
+            $stmt->bind_param(str_repeat('s', count($params)), ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Método para insertar un nuevo lead
+    public function addLead($data) {
+        $this->db->begin_transaction();
+
+        try {
+            // Insertar datos en la tabla clientesleads
+            $queryCliente = "
+                INSERT INTO clientesleads (contacto, correo, telefono, empresa, giro, localidad, sucursal, fechaCreacion, id_usuario)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)
+            ";
+
+            $stmtCliente = $this->db->prepare($queryCliente);
+            if (!$stmtCliente) {
+                throw new Exception("Error preparando la consulta para insertar en clientesleads: " . $this->db->error);
             }
-        }
 
-        return $usuarios;
-    }
-
-    // Obtiene el usuario por correo electrónico
-    public function getUserByEmail($email) 
-    {
-        // Modificación para incluir la unión con detalleusuarios
-        $query = "
-            SELECT 
-                usuarios.id,
-                usuarios.nombre,
-                usuarios.correo,
-                usuarios.contraseña,
-                usuarios.rol,
-                usuarios.puesto,
-                usuarios.sucursal,
-                usuarios.estado,
-                detalleusuarios.intentos_fallidos,
-                detalleusuarios.ultimo_intento,
-                detalleusuarios.ultimo_acceso,
-                detalleusuarios.reset_token,
-                detalleusuarios.reset_expiry
-            FROM 
-                usuarios
-            LEFT JOIN detalleusuarios ON usuarios.detalle_id = detalleusuarios.id
-            WHERE 
-                usuarios.correo = ?
-        ";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
-
-    // Guarda el token de recuperación de contraseña y su expiración en la tabla `detalleusuarios`
-    public function savePasswordResetToken($email, $token) 
-    {
-        $expiry = time() + 3600; // Establece la expiración del token a 1 hora desde ahora
-        
-        // Consulta para actualizar en la tabla detalleusuarios en lugar de usuarios
-        $query = "
-            UPDATE 
-                detalleusuarios
-            SET 
-                reset_token = ?, 
-                reset_expiry = ?
-            WHERE 
-                id = (SELECT detalle_id FROM usuarios WHERE correo = ?)
-        ";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("iis", $token, $expiry, $email);
-        $stmt->execute();
-        return $stmt->affected_rows > 0;
-    }
-
-    // Verifica si el token de recuperación es válido y no ha expirado
-    public function verifyPasswordResetToken($token) 
-    {
-        $current_time = time();
-        
-        // Consultar en `detalleusuarios` para verificar el token y la expiración
-        $query = "
-            SELECT 
-                usuarios.id, 
-                usuarios.nombre, 
-                usuarios.correo, 
-                detalleusuarios.reset_token, 
-                detalleusuarios.reset_expiry 
-            FROM 
-                detalleusuarios
-            JOIN 
-                usuarios ON detalleusuarios.id = usuarios.detalle_id
-            WHERE 
-                detalleusuarios.reset_token = ? 
-                AND detalleusuarios.reset_expiry > ?
-        ";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("si", $token, $current_time);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
-    }
-
-    // Actualiza la contraseña del usuario y elimina el token de recuperación
-    public function updatePassword($token, $hashed_password) 
-    {
-        // Actualizar en la tabla usuarios y limpiar token en detalleusuarios
-        $query = "
-            UPDATE 
-                usuarios 
-            JOIN 
-                detalleusuarios ON usuarios.detalle_id = detalleusuarios.id
-            SET 
-                usuarios.contraseña = ?, 
-                detalleusuarios.reset_token = NULL, 
-                detalleusuarios.reset_expiry = NULL
-            WHERE 
-                detalleusuarios.reset_token = ?
-        ";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->bind_param("si", $hashed_password, $token); 
-        $stmt->execute();
-        return $stmt->affected_rows > 0;
-    }
-}
-?>
+            $stmtCliente->bind_param(
+                "sssssssi",
+                $data['contacto'
